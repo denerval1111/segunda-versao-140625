@@ -34,7 +34,7 @@ export default function BlogClient({ posts = [], categories = [] }) {
 
   // Filtrar posts
   const filteredPosts = useMemo(() => {
-    return posts.filter(post => {
+  return posts.filter((post: any ) => {
       const matchesSearch = !searchTerm || 
         (post.title && post.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()));
