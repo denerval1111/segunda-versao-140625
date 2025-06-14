@@ -1,0 +1,216 @@
+/* Animações para o site Desafio Vitalidade */
+/* Foco em animações sutis e elegantes com transições confortáveis */
+
+/* Configuração para respeitar preferências de redução de movimento */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Animações para a seção Hero */
+.hero-animate {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.hero-animate-title {
+  animation: fadeInUp 1000ms ease-out forwards;
+}
+
+.hero-animate-subtitle {
+  animation: fadeInUp 1000ms ease-out 300ms forwards;
+}
+
+.hero-animate-cta {
+  animation: fadeInUp 1000ms ease-out 600ms forwards;
+}
+
+.hero-animate-secondary-cta {
+  animation: fadeInUp 1000ms ease-out 800ms forwards;
+}
+
+/* Animação de fade in com movimento suave de baixo para cima */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Transições suaves para botões */
+.btn-animate {
+  transition: transform 400ms ease, box-shadow 400ms ease, background-color 400ms ease;
+}
+
+.btn-animate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-animate:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animação para background da hero section */
+.hero-bg-animate {
+  animation: subtleZoom 20s ease-out forwards;
+}
+
+@keyframes subtleZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+/* Classe para desativar animações */
+.no-animations * {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+/* Animação para o botão de acessibilidade */
+.accessibility-button {
+  opacity: 0.7;
+  transition: opacity 300ms ease;
+}
+
+.accessibility-button:hover {
+  opacity: 1;
+}
+
+/* Novas animações para BenefitsSection e PillarsSection */
+
+/* Fade in com movimento para cima */
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 800ms ease-out forwards;
+}
+
+/* Fade in com movimento da direita */
+.animate-fade-right {
+  opacity: 0;
+  transform: translateX(20px);
+  animation: fadeInRight 800ms ease-out forwards;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade in simples */
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 800ms ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animação para ícones */
+.animate-icon-enter {
+  opacity: 0;
+  transform: scale(0.8) rotate(-10deg);
+  animation: iconEnter 600ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes iconEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Animação para imagens */
+.animate-image-zoom {
+  opacity: 0;
+  transform: scale(0.95);
+  animation: imageZoom 1200ms ease-out forwards;
+}
+
+@keyframes imageZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animação para seta nos links */
+.animate-arrow {
+  transition: transform 300ms ease;
+}
+
+.pillar-link:hover .animate-arrow {
+  transform: translateX(3px);
+}
+
+/* Delays para animações sequenciais */
+.animate-delay-0 {
+  animation-delay: 0ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animate-delay-600 {
+  animation-delay: 600ms;
+}
+
+.animate-delay-800 {
+  animation-delay: 800ms;
+}
+
+.animate-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+/* Responsividade para animações */
+@media (max-width: 768px) {
+  .animate-fade-up,
+  .animate-fade-right,
+  .animate-fade-in,
+  .animate-icon-enter,
+  .animate-image-zoom {
+    animation-duration: 600ms; /* Animações mais rápidas em dispositivos móveis */
+  }
+}
+

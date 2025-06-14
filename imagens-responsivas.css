@@ -1,0 +1,110 @@
+.img-responsive {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.img-contain {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Classes para containers de imagens */
+.img-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-container-square {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* Proporção 1:1 */
+  overflow: hidden;
+}
+
+.img-container-4-3 {
+  position: relative;
+  width: 100%;
+  padding-bottom: 75%; /* Proporção 4:3 */
+  overflow: hidden;
+}
+
+.img-container-16-9 {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* Proporção 16:9 */
+  overflow: hidden;
+}
+
+/* Posicionamento absoluto para imagens dentro de containers com proporção fixa */
+.img-container-square img,
+.img-container-4-3 img,
+.img-container-16-9 img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Correção para imagens em grid e flex layouts */
+.grid img, .flex img {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Ajustes para imagens de fundo */
+.bg-image {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Media queries para ajustes específicos em dispositivos móveis */
+@media (max-width: 640px) {
+  .mobile-img-full {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    max-width: none;
+  }
+  
+  .mobile-img-contained {
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Correção para imagens que podem causar overflow horizontal */
+.prevent-overflow {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Classe para centralizar imagens em qualquer contexto */
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  left: 0 !important; /* Força centralização mesmo com outros estilos */
+  transform: translateX(0) !important; /* Reseta qualquer transformação que possa deslocar */
+}
