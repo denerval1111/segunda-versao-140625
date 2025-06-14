@@ -1,6 +1,28 @@
 import { notFound } from 'next/navigation';
-import { getPostData, getSortedPostsData } from '@/lib/posts';
+import { getPostData, getSortedPostsData } from '../../../lib/posts';
 import PostClient from './PostClient';
+
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function Post({ params }: PageProps) {
+  const { id } = await params;
+  
+  let post;
+  try {
+    post = await getPostData(id);
+  } catch (error) {
+    notFound();
+  }
+
+  const allPosts = getSortedPostsData();
+  const relatedPosts = allPosts
+    .filter(p => p.id !== id && p.category === post.category)
+    .slice(0, 3);
+
+  return <PostClient post={post} relatedPosts={relatedPosts} />;
+}
 
 export async function generateStaticParams() {
   const posts = getSortedPostsData();
@@ -9,48 +31,28 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const postData = await getPostData(params.id);
+export async function generateMetadata({ params }: PageProps) {
+  const { id } = await params;
   
-  if (!postData) {
+  try {
+    const post = await getPostData(id);
     return {
-      title: 'Post não encontrado | Desafio Vitalidade',
+      title: `${post.title} | Blog Desafio Vitalidade`,
+      description: post.excerpt,
+      openGraph: {
+        title: post.title,
+        description: post.excerpt,
+        type: 'article',
+        authors: [post.author],
+      },
+    };
+  } catch (error) {
+    return {
+      title: 'Post não encontrado | Blog Desafio Vitalidade',
+      description: 'O post solicitado não foi encontrado.',
     };
   }
-
-  return {
-    title: `${postData.title} | Desafio Vitalidade`,
-    description: postData.excerpt || 'Artigo do blog Desafio Vitalidade',
-    keywords: postData.tags ? postData.tags.join(', ') : '',
-    openGraph: {
-      title: postData.title,
-      description: postData.excerpt || 'Artigo do blog Desafio Vitalidade',
-      type: 'article',
-      publishedTime: postData.date,
-      authors: [postData.author],
-      tags: postData.tags,
-    },
-  };
 }
 
-export default async function PostPage({ params }: { params: { id: string } }) {
-  const postData = await getPostData(params.id);
-  
-  if (!postData) {
-    notFound();
-  }
 
-  // Obter posts relacionados (mesma categoria)
-  const allPosts = getSortedPostsData();
-  const relatedPosts = allPosts
-    .filter(post => post.category === postData.category && post.id !== postData.id)
-    .slice(0, 3);
-
-  return (
-    <PostClient 
-      post={postData} 
-      relatedPosts={relatedPosts}
-    />
-  );
-}
 
