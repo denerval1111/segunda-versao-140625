@@ -32,8 +32,8 @@ export default async function Post({ params }: PageProps) {
     })
     .slice(0, 3);
 
-  // Agora TypeScript sabe que post não é null
-  return <PostClient post={post as any} relatedPosts={relatedPosts} />;
+  // Correção final: type assertion para ambos os props
+  return <PostClient post={post as any} relatedPosts={relatedPosts as any} />;
 }
 
 export async function generateStaticParams() {
@@ -72,6 +72,8 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 }
+
+
 
 
 
