@@ -9,7 +9,7 @@ export default function BlogClient({ posts = [], categories = [] }) {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
   // Função para calcular tempo de leitura
-  const calculateReadingTime = (content) => {
+ const calculateReadingTime = (content: any) => {
     if (!content) return '5 min';
     const wordsPerMinute = 200;
     const words = content.split(' ').length;
