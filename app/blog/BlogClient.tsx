@@ -98,7 +98,7 @@ export default function BlogClient({ posts = [], categories = [] }) {
         {/* Grid de Posts */}
         {filteredPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {filteredPosts.map((post) => (
+           {filteredPosts.map((post: any) => (
               <article
                 key={post.id}
                 className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
