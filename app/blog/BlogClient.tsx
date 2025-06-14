@@ -18,7 +18,7 @@ export default function BlogClient({ posts = [], categories = [] }) {
   };
 
   // Função para formatar data
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: any) => {
     if (!dateString) return 'Data não disponível';
     try {
       const date = new Date(dateString);
