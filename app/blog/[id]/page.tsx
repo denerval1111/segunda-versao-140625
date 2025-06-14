@@ -17,8 +17,15 @@ export default async function Post({ params }: PageProps) {
   }
 
   const allPosts = getSortedPostsData();
+  
+  // Correção: Verificação segura de propriedades com type assertion
   const relatedPosts = allPosts
-    .filter(p => p.id !== id && p.category === post.category)
+    .filter((p: any) => {
+      return p.id !== id && 
+             p.category && 
+             (post as any).category && 
+             p.category === (post as any).category;
+    })
     .slice(0, 3);
 
   return <PostClient post={post} relatedPosts={relatedPosts} />;
@@ -37,13 +44,12 @@ export async function generateMetadata({ params }: PageProps) {
   try {
     const post = await getPostData(id);
     return {
-      title: `${post.title} | Blog Desafio Vitalidade`,
-      description: post.excerpt,
+      title: `${(post as any).title || 'Post'} | Blog Desafio Vitalidade`,
+      description: (post as any).excerpt || (post as any).title || 'Artigo do blog Desafio Vitalidade',
       openGraph: {
-        title: post.title,
-        description: post.excerpt,
+        title: (post as any).title || 'Post',
+        description: (post as any).excerpt || (post as any).title || 'Artigo do blog',
         type: 'article',
-        authors: [post.author],
       },
     };
   } catch (error) {
@@ -53,6 +59,8 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 }
+
+
 
 
 
