@@ -12,13 +12,17 @@ export default async function Post({ params }: PageProps) {
   let post;
   try {
     post = await getPostData(id);
+    
+    // Verificação adicional: se post é null ou undefined, redireciona para 404
+    if (!post) {
+      notFound();
+    }
   } catch (error) {
     notFound();
   }
 
   const allPosts = getSortedPostsData();
   
-  // Correção: Verificação segura de propriedades com type assertion
   const relatedPosts = allPosts
     .filter((p: any) => {
       return p.id !== id && 
@@ -28,12 +32,13 @@ export default async function Post({ params }: PageProps) {
     })
     .slice(0, 3);
 
-  return <PostClient post={post} relatedPosts={relatedPosts} />;
+  // Agora TypeScript sabe que post não é null
+  return <PostClient post={post as any} relatedPosts={relatedPosts} />;
 }
 
 export async function generateStaticParams() {
   const posts = getSortedPostsData();
-  return posts.map((post) => ({
+  return posts.map((post: any) => ({
     id: post.id,
   }));
 }
@@ -43,6 +48,14 @@ export async function generateMetadata({ params }: PageProps) {
   
   try {
     const post = await getPostData(id);
+    
+    if (!post) {
+      return {
+        title: 'Post não encontrado | Blog Desafio Vitalidade',
+        description: 'O post solicitado não foi encontrado.',
+      };
+    }
+    
     return {
       title: `${(post as any).title || 'Post'} | Blog Desafio Vitalidade`,
       description: (post as any).excerpt || (post as any).title || 'Artigo do blog Desafio Vitalidade',
@@ -59,6 +72,8 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 }
+
+
 
 
 
