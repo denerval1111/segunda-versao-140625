@@ -2,15 +2,16 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Footer from '@/components/Footer';
 
-// Importações da nova estrutura CSS
-import '../styles/globals.css';
-import '../styles/base/typography.css';
-import '../styles/base/utilities.css';
-import '../styles/components/cards.css';
-import '../styles/components/buttons.css';
-import '../styles/layout/responsive.css';
-import '../styles/animations/transitions.css';
-import '../styles/animations/keyframes.css';
+// Importações CORRETAS para a pasta 'style' (sem 's')
+import '../style/globals.css';
+import '../style/base/typography.css';
+import '../style/base/utilities.css';
+import '../style/components/cards.css';
+import '../style/components/buttons.css';
+import '../style/components/images.css';
+import '../style/layout/responsive.css';
+import '../style/animations/transitions.css';
+import '../style/animations/keyframes.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,6 +34,8 @@ export default function RootLayout({
     </html>
   );
 }
+
+
 
 
 
