@@ -183,7 +183,7 @@ export default function Header() {
                 Saúde Mental
               </Link>
 
-              <Link href="/pilares/gerenciamento-de-peso" style={{
+              <a href="/pilares/gerenciamento-de-peso" style={{
                 display: 'flex',
                 alignItems: 'center',
                 padding: '0.75rem 1rem',
@@ -199,7 +199,7 @@ export default function Header() {
                   backgroundColor: '#8b5cf6'
                 }}></span>
                 Gerenciamento de Peso
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -223,17 +223,6 @@ export default function Header() {
             transition: 'all 0.3s ease'
           }} className="nav-link">
             Blog
-          </Link>
-
-          <Link href="/contato" style={{
-            color: '#374151',
-            textDecoration: 'none',
-            fontWeight: '500',
-            padding: '0.5rem 1rem',
-            borderRadius: '6px',
-            transition: 'all 0.3s ease'
-          }} className="nav-link">
-            Contato
           </Link>
 
           <Link href="/inscricao" style={{
@@ -407,7 +396,7 @@ export default function Header() {
                   Saúde Mental
                 </Link>
 
-                <Link href="/pilares/gerenciamento-de-peso" onClick={closeMobileMenu} style={{
+                <a href="/pilares/gerenciamento-de-peso" onClick={closeMobileMenu} style={{
                   display: 'flex',
                   alignItems: 'center',
                   color: '#374151',
@@ -424,7 +413,7 @@ export default function Header() {
                     backgroundColor: '#8b5cf6'
                   }}></span>
                   Gerenciamento de Peso
-                </Link>
+                </a>
               </div>
             )}
           </div>
@@ -447,16 +436,6 @@ export default function Header() {
             transition: 'background-color 0.2s ease'
           }} className="mobile-nav-link">
             Blog
-          </Link>
-
-          <Link href="/contato" onClick={closeMobileMenu} style={{
-            color: '#374151',
-            textDecoration: 'none',
-            padding: '0.75rem 1rem',
-            borderRadius: '6px',
-            transition: 'background-color 0.2s ease'
-          }} className="mobile-nav-link">
-            Contato
           </Link>
 
           <Link href="/inscricao" onClick={closeMobileMenu} style={{
@@ -507,5 +486,7 @@ export default function Header() {
     </header>
   );
 }
+
+
 
 
