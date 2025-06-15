@@ -1,4 +1,4 @@
-import { getSortedPostsData, getAllCategories } from '../../lib/posts';
+import { getSortedPostsData } from '../../lib/posts';
 import BlogClient from './BlogClient';
 
 export const metadata = {
@@ -14,15 +14,15 @@ export const metadata = {
 
 export default function BlogPage() {
   const allPostsData = getSortedPostsData();
-  const allCategories = getAllCategories();
 
   return (
     <BlogClient 
       posts={allPostsData as any} 
-      categories={allCategories as any} 
     />
   );
 }
+
+
 
 
 
