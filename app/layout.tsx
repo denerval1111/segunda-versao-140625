@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Footer from '@/components/Footer';
 
-// Importações CORRETAS para a pasta 'style' (sem 's')
+// Importações da estrutura CSS organizada
 import '../style/globals.css';
 import '../style/base/typography.css';
 import '../style/base/utilities.css';
@@ -10,8 +10,8 @@ import '../style/components/cards.css';
 import '../style/components/buttons.css';
 import '../style/components/images.css';
 import '../style/layout/responsive.css';
-import '../style/animations/transitions.css';
-import '../style/animations/keyframes.css';
+import '../style/amimations/tansitions.css';
+import '../style/amimations/keyframes.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -34,6 +34,10 @@ export default function RootLayout({
     </html>
   );
 }
+
+// Trigger para forçar rebuild da Vercel - Atualização: 15/06/2025 13:57
+
+
 
 
 
