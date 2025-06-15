@@ -23,7 +23,7 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  // Posts integrados com categorias corretas
+  // Posts integrados com as 4 categorias dos Pilares
   const fallbackPosts: Post[] = [
     {
       slug: 'ansiedade-estresse-moderno',
@@ -59,42 +59,26 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
       tags: ['dieta mediterrânea', 'culinária asiática', 'longevidade', 'antioxidantes', 'ômega-3', 'anti-inflamatório']
     },
     {
-      slug: 'pilares-longevidade-saudavel',
-      title: 'Os 3 Pilares da Longevidade Saudável: Medicina Regenerativa, Nutrologia e Saúde Mental',
-      excerpt: 'Descubra como a medicina regenerativa não intervencionista, a nutrologia baseada em evidências e o cuidado com a saúde mental podem transformar sua jornada rumo à longevidade com vitalidade.',
-      date: '2024-06-14',
-      author: 'Dr. Denerval',
-      category: 'Medicina Integrativa',
-      image: '/images/blog/pilares-longevidade.jpg',
-      readTime: '8 min de leitura',
-      tags: ['longevidade', 'medicina regenerativa', 'nutrologia', 'saúde mental', 'autofagia', 'telômeros']
-    },
-    {
       slug: 'gerenciamento-peso-saudavel',
       title: 'Gerenciamento do Peso Saudável: Estratégias Científicas para Longevidade',
       excerpt: 'Descubra como o controle de peso baseado em evidências científicas pode transformar sua saúde e promover longevidade através de estratégias nutricionais e metabólicas inteligentes.',
       date: '2024-06-15',
       author: 'Dr. Denerval',
-      category: 'Nutrologia',
+      category: 'Gerenciamento de Peso',
       image: '/images/blog/gerenciamento-peso.jpg',
       readTime: '7 min de leitura',
       tags: ['controle de peso', 'metabolismo', 'nutrologia', 'longevidade', 'composição corporal', 'saúde metabólica']
     }
   ];
 
-  // Debug: Log dos posts recebidos
-  console.log('🔍 DEBUG - Posts recebidos:', posts);
-  console.log('🔍 DEBUG - Quantidade de posts:', posts?.length || 0);
-  
   // Usar posts recebidos se existirem e tiverem dados válidos, senão usar fallback
   const activePosts = (posts && posts.length > 0) ? posts : fallbackPosts;
-  
-  console.log('🔍 DEBUG - Posts ativos:', activePosts);
-  console.log('🔍 DEBUG - Usando fallback?', !posts || posts.length === 0);
 
-  // Extrair categorias únicas
-  const categories = ['Todos', ...Array.from(new Set(activePosts.map(post => post.category)))];
-  console.log('🔍 DEBUG - Categorias encontradas:', categories);
+  // Extrair categorias únicas - sempre incluir as 4 categorias dos Pilares
+  const pilarCategories = ['Medicina Regenerativa', 'Nutrologia', 'Saúde Mental', 'Gerenciamento de Peso'];
+  const postCategories = Array.from(new Set(activePosts.map(post => post.category)));
+  const allCategories = Array.from(new Set([...pilarCategories, ...postCategories]));
+  const categories = ['Todos', ...allCategories];
 
   // Filtrar posts
   const filteredPosts = useMemo(() => {
@@ -106,15 +90,13 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
     });
   }, [activePosts, searchTerm, selectedCategory]);
 
-  console.log('🔍 DEBUG - Posts filtrados:', filteredPosts);
-
   // Função para obter cor da categoria
   const getCategoryColor = (category: string) => {
     const colors = {
       'Medicina Regenerativa': 'linear-gradient(135deg, #10b981, #059669)',
-      'Medicina Integrativa': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
       'Nutrologia': 'linear-gradient(135deg, #f59e0b, #d97706)',
       'Saúde Mental': 'linear-gradient(135deg, #3b82f6, #2563eb)',
+      'Gerenciamento de Peso': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
     };
     return colors[category as keyof typeof colors] || 'linear-gradient(135deg, #6b7280, #4b5563)';
   };
@@ -123,9 +105,9 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
   const getImagePlaceholder = (category: string) => {
     const gradients = {
       'Medicina Regenerativa': 'linear-gradient(135deg, #10b981, #059669)',
-      'Medicina Integrativa': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
       'Nutrologia': 'linear-gradient(135deg, #f59e0b, #d97706)',
       'Saúde Mental': 'linear-gradient(135deg, #3b82f6, #2563eb)',
+      'Gerenciamento de Peso': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
     };
     return gradients[category as keyof typeof gradients] || 'linear-gradient(135deg, #6b7280, #4b5563)';
   };
@@ -137,23 +119,6 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
       padding: '2rem 0'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
-        
-        {/* Debug Info */}
-        <div style={{
-          background: '#f3f4f6',
-          border: '1px solid #d1d5db',
-          borderRadius: '8px',
-          padding: '1rem',
-          marginBottom: '2rem',
-          fontSize: '0.875rem',
-          color: '#374151'
-        }}>
-          <strong>🔍 DEBUG INFO:</strong><br/>
-          Posts recebidos: {posts?.length || 0}<br/>
-          Posts ativos: {activePosts.length}<br/>
-          Usando fallback: {(!posts || posts.length === 0) ? 'SIM' : 'NÃO'}<br/>
-          Categorias: {categories.join(', ')}
-        </div>
         
         {/* Header */}
         <div style={{
@@ -526,6 +491,8 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
 };
 
 export default BlogClient;
+
+
 
 
 
