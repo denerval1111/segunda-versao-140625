@@ -22,9 +22,83 @@ interface BlogClientProps {
   categories: string[];
 }
 
-const BlogClient: React.FC<BlogClientProps> = ({ posts, categories }) => {
+// Posts de fallback caso os arquivos não carreguem
+const fallbackPosts: Post[] = [
+  {
+    id: 'pilares-longevidade-saudavel',
+    title: 'Os 3 Pilares da Longevidade Saudável: Medicina Regenerativa, Nutrologia e Saúde Mental',
+    excerpt: 'Descubra como a medicina regenerativa não intervencionista, a nutrologia baseada em evidências e o cuidado com a saúde mental podem transformar sua jornada rumo à longevidade com vitalidade.',
+    date: '2024-06-13',
+    category: 'Medicina Regenerativa',
+    author: 'Dr. Denerval',
+    tags: ['longevidade', 'medicina regenerativa', 'nutrologia', 'saúde mental'],
+    readTime: '8 min'
+  },
+  {
+    id: 'autofagia-renovacao-celular',
+    title: 'Autofagia: O Segredo da Renovação Celular para uma Vida Mais Longa',
+    excerpt: 'Entenda como o processo natural de autofagia pode ser otimizado através de estratégias simples e baseadas em ciência para promover a regeneração celular e retardar o envelhecimento.',
+    date: '2024-06-12',
+    category: 'Nutrologia',
+    author: 'Dr. Denerval',
+    tags: ['autofagia', 'regeneração celular', 'anti-aging', 'jejum intermitente'],
+    readTime: '6 min'
+  },
+  {
+    id: 'dieta-mediterranea-asiatica',
+    title: 'Dieta Mediterrânea e Asiática: A Combinação Perfeita para a Longevidade',
+    excerpt: 'Descubra como combinar os benefícios da dieta mediterrânea com a sabedoria milenar da culinária asiática para criar um plano alimentar que promove saúde, vitalidade e longevidade.',
+    date: '2024-06-11',
+    category: 'Nutrologia',
+    author: 'Dr. Denerval',
+    tags: ['dieta mediterrânea', 'culinária asiática', 'longevidade', 'nutrição'],
+    readTime: '7 min'
+  },
+  {
+    id: 'ansiedade-estresse-moderno',
+    title: 'Ansiedade e Estresse Moderno: Estratégias Baseadas em Ciência para o Bem-Estar Mental',
+    excerpt: 'Aprenda técnicas comprovadas cientificamente para gerenciar ansiedade, combater o estresse do mundo moderno e cultivar uma mente mais equilibrada e resiliente.',
+    date: '2024-06-10',
+    category: 'Saúde Mental',
+    author: 'Dr. Denerval',
+    tags: ['ansiedade', 'estresse', 'bem-estar mental', 'mindfulness'],
+    readTime: '9 min'
+  }
+];
+
+const BlogClientHibrido: React.FC<BlogClientProps> = ({ posts, categories }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
+
+  // Sistema híbrido: usar posts recebidos ou fallback
+  const postsToUse = useMemo(() => {
+    // Se não há posts ou estão vazios, usar fallback
+    if (!posts || posts.length === 0) {
+      console.log('🔄 Usando posts de fallback - nenhum post carregado dos arquivos');
+      return fallbackPosts;
+    }
+    
+    // Verificar se os posts têm dados válidos
+    const validPosts = posts.filter(post => post.title && post.category);
+    if (validPosts.length === 0) {
+      console.log('🔄 Usando posts de fallback - posts dos arquivos inválidos');
+      return fallbackPosts;
+    }
+    
+    console.log('✅ Usando posts dos arquivos .md:', validPosts.length, 'posts');
+    return validPosts;
+  }, [posts]);
+
+  // Categorias: usar recebidas ou extrair dos posts usados
+  const categoriesToUse = useMemo(() => {
+    if (!categories || categories.length === 0) {
+      const extractedCategories = [...new Set(postsToUse.map(post => post.category))];
+      console.log('🔄 Usando categorias extraídas dos posts:', extractedCategories);
+      return extractedCategories;
+    }
+    console.log('✅ Usando categorias recebidas:', categories);
+    return categories;
+  }, [categories, postsToUse]);
 
   // Função para calcular tempo de leitura
   const calculateReadTime = (content: string) => {
@@ -57,17 +131,17 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts, categories }) => {
 
   // Posts filtrados
   const filteredPosts = useMemo(() => {
-    return posts.filter(post => {
+    return postsToUse.filter(post => {
       const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())) ||
                           (post.description && post.description.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchesCategory = selectedCategory === 'Todos' || post.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [posts, searchTerm, selectedCategory]);
+  }, [postsToUse, searchTerm, selectedCategory]);
 
   // Preparar categorias para filtro
-  const allCategories = ['Todos', ...categories];
+  const allCategories = ['Todos', ...categoriesToUse];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -227,7 +301,9 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts, categories }) => {
   );
 };
 
-export default BlogClient;
+export default BlogClientHibrido;
+
+
 
 
 
