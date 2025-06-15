@@ -127,8 +127,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
               fontSize: '1rem',
               transition: 'border-color 0.3s ease'
             }}
-            onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-            onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+            onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#3b82f6'}
+            onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#e5e7eb'}
           />
         </div>
 
@@ -164,12 +164,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 }}
                 onMouseEnter={(e) => {
                   if (selectedCategory !== category) {
-                    e.target.style.backgroundColor = '#e5e7eb';
+                    (e.target as HTMLButtonElement).style.backgroundColor = '#e5e7eb';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (selectedCategory !== category) {
-                    e.target.style.backgroundColor = '#f3f4f6';
+                    (e.target as HTMLButtonElement).style.backgroundColor = '#f3f4f6';
                   }
                 }}
               >
@@ -277,7 +277,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                         backgroundColor: '#f3f4f6',
                         color: '#6b7280',
                         padding: '0.25rem 0.5rem',
-                        borderRadius: '8px',
+                        borderRadius: '6px',
                         fontSize: '0.75rem',
                         fontWeight: '500'
                       }}>
@@ -292,30 +292,27 @@ export default function BlogClient({ posts }: BlogClientProps) {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  paddingTop: '1rem',
-                  borderTop: '1px solid #f3f4f6',
-                  fontSize: '0.9rem',
-                  color: '#9ca3af'
+                  fontSize: '0.875rem',
+                  color: '#9ca3af',
+                  marginTop: 'auto'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    📅 {new Date(post.date).toLocaleDateString('pt-BR')}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <span>📅 {new Date(post.date).toLocaleDateString('pt-BR')}</span>
+                    <span>👨‍⚕️ {post.author}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    ⏱️ {post.readTime}
-                  </div>
+                  <span>⏱️ {post.readTime}</span>
                 </div>
 
                 {/* Botão Ler Mais */}
-                <div style={{
-                  marginTop: '1.5rem'
-                }}>
+                <div style={{ marginTop: '1.5rem' }}>
                   <span style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.5rem',
                     color: categoryColors[post.category] || '#3b82f6',
                     fontWeight: '600',
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
+                    transition: 'all 0.3s ease'
                   }}>
                     Ler artigo completo →
                   </span>
@@ -333,17 +330,22 @@ export default function BlogClient({ posts }: BlogClientProps) {
           padding: '4rem 2rem',
           backgroundColor: 'white',
           borderRadius: '12px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+          border: '1px solid #e5e7eb'
         }}>
           <h3 style={{
             fontSize: '1.5rem',
-            color: '#6b7280',
+            fontWeight: '600',
+            color: '#374151',
             marginBottom: '1rem'
           }}>
             Nenhum artigo encontrado
           </h3>
-          <p style={{ color: '#9ca3af' }}>
-            Tente ajustar os filtros ou termo de busca.
+          <p style={{
+            color: '#6b7280',
+            fontSize: '1rem'
+          }}>
+            Tente ajustar os filtros ou termo de busca para encontrar o conteúdo desejado.
           </p>
         </div>
       )}
@@ -353,16 +355,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
           transform: translateY(-4px);
           box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
         }
-
-        @media (max-width: 768px) {
-          .post-card {
-            margin-bottom: 1rem;
-          }
-        }
       `}</style>
     </div>
   );
 }
+
 
 
 
