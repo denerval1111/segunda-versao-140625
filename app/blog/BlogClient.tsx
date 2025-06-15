@@ -3,12 +3,15 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 
+// Definir tipos específicos para categorias
+type CategoryType = 'Medicina Regenerativa' | 'Nutrologia' | 'Saúde Mental' | 'Gerenciamento de Peso';
+
 interface Post {
   id: string;
   title: string;
   description: string;
   date: string;
-  category: string;
+  category: CategoryType;
   author: string;
   readTime: string;
   tags?: string[];
@@ -18,16 +21,16 @@ interface BlogClientProps {
   posts: Post[];
 }
 
-// Cores por categoria
-const categoryColors = {
+// Cores por categoria com tipagem específica
+const categoryColors: Record<CategoryType, string> = {
   'Medicina Regenerativa': '#10b981',
   'Nutrologia': '#f59e0b', 
   'Saúde Mental': '#3b82f6',
   'Gerenciamento de Peso': '#8b5cf6'
 };
 
-// Gradientes por categoria
-const categoryGradients = {
+// Gradientes por categoria com tipagem específica
+const categoryGradients: Record<CategoryType, string> = {
   'Medicina Regenerativa': 'linear-gradient(135deg, #10b981, #059669)',
   'Nutrologia': 'linear-gradient(135deg, #f59e0b, #d97706)',
   'Saúde Mental': 'linear-gradient(135deg, #3b82f6, #2563eb)',
@@ -100,6 +103,16 @@ export default function BlogClient({ posts }: BlogClientProps) {
       return matchesSearch && matchesCategory;
     });
   }, [activePosts, searchTerm, selectedCategory]);
+
+  // Função helper para obter cor da categoria
+  const getCategoryColor = (category: string): string => {
+    return categoryColors[category as CategoryType] || '#6b7280';
+  };
+
+  // Função helper para obter gradiente da categoria
+  const getCategoryGradient = (category: string): string => {
+    return categoryGradients[category as CategoryType] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  };
 
   return (
     <div>
@@ -205,7 +218,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
               {/* Imagem/Placeholder com gradiente da categoria */}
               <div style={{
                 height: '200px',
-                background: categoryGradients[post.category] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: getCategoryGradient(post.category),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -228,8 +241,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 {/* Categoria */}
                 <div style={{
                   display: 'inline-block',
-                  backgroundColor: `${categoryColors[post.category] || '#6b7280'}15`,
-                  color: categoryColors[post.category] || '#6b7280',
+                  backgroundColor: `${getCategoryColor(post.category)}15`,
+                  color: getCategoryColor(post.category),
                   padding: '0.25rem 0.75rem',
                   borderRadius: '12px',
                   fontSize: '0.8rem',
@@ -309,7 +322,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    color: categoryColors[post.category] || '#3b82f6',
+                    color: getCategoryColor(post.category),
                     fontWeight: '600',
                     fontSize: '0.9rem',
                     transition: 'all 0.3s ease'
@@ -359,6 +372,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
     </div>
   );
 }
+
 
 
 
