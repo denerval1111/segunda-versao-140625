@@ -2,8 +2,8 @@
 import { getSortedPostsData } from '@/lib/posts';
 import BlogClient from './BlogClient';
 
-export default async function BlogPage() {
-  const allPostsData = await getSortedPostsData();
+export default function BlogPage() {
+  const allPostsData = getSortedPostsData(); // Removido await
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
@@ -46,6 +46,8 @@ export default async function BlogPage() {
     </div>
   );
 }
+
+
 
 
 
