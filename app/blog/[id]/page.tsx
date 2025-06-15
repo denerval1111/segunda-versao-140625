@@ -1,4 +1,3 @@
-// app/blog/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import { getPostData, getSortedPostsData } from '../../../lib/posts';
 import PostClient from './PostClient';
@@ -13,7 +12,7 @@ export default async function Post({ params }: PageProps) {
   let post;
   try {
     post = await getPostData(id);
-  } catch {
+    
     // Verificação adicional: se post é null ou undefined, redireciona para 404
     if (!post) {
       notFound();
