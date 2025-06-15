@@ -1,6 +1,5 @@
 // app/pilares/gerenciamento-peso/page.tsx
 import React from 'react';
-import ActionButton from '@/components/ActionButton';
 
 export default function GerenciamentoPesoPage() {
   return (
@@ -382,15 +381,28 @@ export default function GerenciamentoPesoPage() {
         }}>
           Junte-se ao Desafio Vitalidade e tenha acesso a estratégias científicas de gerenciamento de peso que promovem resultados duradouros e saúde metabólica otimizada.
         </p>
-        <ActionButton 
-          href="/inscricao" 
-          text="Participe do Desafio Vitalidade" 
-          primary={true} 
-        />
+        <a 
+          href="/inscricao"
+          style={{
+            display: 'inline-block',
+            backgroundColor: '#8b5cf6',
+            color: 'white',
+            padding: '1rem 2rem',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontWeight: '600',
+            fontSize: '1.1rem',
+            transition: 'background-color 0.3s ease'
+          }}
+        >
+          Participe do Desafio Vitalidade
+        </a>
       </div>
     </div>
   );
 }
+
+
 
 
 
