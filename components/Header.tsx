@@ -183,7 +183,7 @@ export default function Header() {
                 Saúde Mental
               </Link>
 
-              <a href="/pilares/gerenciamento-de-peso" style={{
+              <Link href="/pilares/peso-saudavel" style={{
                 display: 'flex',
                 alignItems: 'center',
                 padding: '0.75rem 1rem',
@@ -199,7 +199,7 @@ export default function Header() {
                   backgroundColor: '#8b5cf6'
                 }}></span>
                 Gerenciamento de Peso
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -396,7 +396,7 @@ export default function Header() {
                   Saúde Mental
                 </Link>
 
-                <a href="/pilares/gerenciamento-de-peso" onClick={closeMobileMenu} style={{
+                <Link href="/pilares/peso-saudavel" onClick={closeMobileMenu} style={{
                   display: 'flex',
                   alignItems: 'center',
                   color: '#374151',
@@ -413,7 +413,7 @@ export default function Header() {
                     backgroundColor: '#8b5cf6'
                   }}></span>
                   Gerenciamento de Peso
-                </a>
+                </Link>
               </div>
             )}
           </div>
@@ -486,6 +486,8 @@ export default function Header() {
     </header>
   );
 }
+
+
 
 
 
