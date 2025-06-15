@@ -1,3 +1,4 @@
+// app/blog/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import { getPostData, getSortedPostsData } from '../../../lib/posts';
 import PostClient from './PostClient';
@@ -12,7 +13,7 @@ export default async function Post({ params }: PageProps) {
   let post;
   try {
     post = await getPostData(id);
-    
+  } catch {
     // Verificação adicional: se post é null ou undefined, redireciona para 404
     if (!post) {
       notFound();
@@ -32,46 +33,17 @@ export default async function Post({ params }: PageProps) {
     })
     .slice(0, 3);
 
-  // Correção final: type assertion para ambos os props
-  return <PostClient post={post as any} relatedPosts={relatedPosts as any} />;
+  return <PostClient post={post} relatedPosts={relatedPosts} />;
 }
 
 export async function generateStaticParams() {
   const posts = getSortedPostsData();
-  return posts.map((post: any) => ({
+  return posts.map((post) => ({
     id: post.id,
   }));
 }
 
-export async function generateMetadata({ params }: PageProps) {
-  const { id } = await params;
-  
-  try {
-    const post = await getPostData(id);
-    
-    if (!post) {
-      return {
-        title: 'Post não encontrado | Blog Desafio Vitalidade',
-        description: 'O post solicitado não foi encontrado.',
-      };
-    }
-    
-    return {
-      title: `${(post as any).title || 'Post'} | Blog Desafio Vitalidade`,
-      description: (post as any).excerpt || (post as any).title || 'Artigo do blog Desafio Vitalidade',
-      openGraph: {
-        title: (post as any).title || 'Post',
-        description: (post as any).excerpt || (post as any).title || 'Artigo do blog',
-        type: 'article',
-      },
-    };
-  } catch (error) {
-    return {
-      title: 'Post não encontrado | Blog Desafio Vitalidade',
-      description: 'O post solicitado não foi encontrado.',
-    };
-  }
-}
+
 
 
 
