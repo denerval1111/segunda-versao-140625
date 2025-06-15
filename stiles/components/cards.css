@@ -1,0 +1,209 @@
+/* Estilos para Cards - Desafio Vitalidade */
+
+/* Card padrão */
+.card-padrao {
+  background-color: var(--branco);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid #f0f0f0;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.card-padrao:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Card com destaque (borda superior verde) */
+.card-destaque {
+  border-top: 4px solid var(--verde-vitalidade);
+}
+
+/* Card com gradiente */
+.card-gradiente {
+  background: linear-gradient(135deg, var(--verde-vitalidade) 0%, var(--azul-vitalidade) 100%);
+  color: var(--branco);
+}
+
+.card-gradiente .titulo-card,
+.card-gradiente .texto-card {
+  color: var(--branco);
+}
+
+/* Card compacto */
+.card-compacto {
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Card com imagem */
+.card-imagem {
+  overflow: hidden;
+}
+
+.card-imagem img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-sm);
+  transition: transform var(--transition-normal);
+}
+
+.card-imagem:hover img {
+  transform: scale(1.05);
+}
+
+/* Container para grid de cards */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+}
+
+/* Grid de 2 colunas */
+.cards-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+}
+
+/* Grid de 3 colunas */
+.cards-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Grid de 4 colunas */
+.cards-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Card de estatística */
+.card-estatistica {
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
+.card-estatistica .numero {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 3rem;
+  color: var(--verde-vitalidade);
+  line-height: 1;
+  margin-bottom: var(--spacing-xs);
+}
+
+.card-estatistica .label {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--cinza-medio);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Card de depoimento */
+.card-depoimento {
+  position: relative;
+  padding: var(--spacing-xl);
+  background-color: var(--cinza-claro);
+}
+
+.card-depoimento::before {
+  content: '"';
+  position: absolute;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
+  font-size: 4rem;
+  color: var(--verde-vitalidade);
+  font-family: var(--font-primary);
+  line-height: 1;
+  opacity: 0.3;
+}
+
+.card-depoimento .autor {
+  margin-top: var(--spacing-md);
+  font-weight: 600;
+  color: var(--cinza-escuro);
+}
+
+/* Card de preço */
+.card-preco {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-preco.destaque {
+  border: 2px solid var(--verde-vitalidade);
+  transform: scale(1.05);
+}
+
+.card-preco .badge {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background-color: var(--verde-vitalidade);
+  color: var(--branco);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.card-preco .preco {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: var(--verde-vitalidade);
+  margin: var(--spacing-md) 0;
+}
+
+.card-preco .periodo {
+  font-size: 1rem;
+  color: var(--cinza-medio);
+  font-weight: 400;
+}
+
+/* Media queries para responsividade */
+@media (max-width: 768px) {
+  .card-padrao {
+    padding: var(--spacing-md);
+  }
+  
+  .cards-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .cards-grid-2,
+  .cards-grid-3,
+  .cards-grid-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-estatistica .numero {
+    font-size: 2.5rem;
+  }
+  
+  .card-preco.destaque {
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-padrao {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .card-estatistica {
+    padding: var(--spacing-lg);
+  }
+  
+  .card-estatistica .numero {
+    font-size: 2rem;
+  }
+}
+
