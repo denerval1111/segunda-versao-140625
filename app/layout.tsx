@@ -8,7 +8,6 @@ import '../styles/base/typography.css';
 import '../styles/base/utilities.css';
 import '../styles/components/cards.css';
 import '../styles/components/buttons.css';
-import '../styles/components/images.css';
 import '../styles/layout/responsive.css';
 import '../styles/animations/transitions.css';
 import '../styles/animations/keyframes.css';
@@ -34,6 +33,7 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 
 
