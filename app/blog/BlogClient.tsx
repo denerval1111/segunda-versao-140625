@@ -23,7 +23,7 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  // Posts integrados como fallback
+  // Posts integrados com categorias corretas
   const fallbackPosts: Post[] = [
     {
       slug: 'ansiedade-estresse-moderno',
@@ -82,11 +82,19 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
     }
   ];
 
-  // Usar posts recebidos ou fallback
-  const activePosts = posts && posts.length > 0 ? posts : fallbackPosts;
+  // Debug: Log dos posts recebidos
+  console.log('🔍 DEBUG - Posts recebidos:', posts);
+  console.log('🔍 DEBUG - Quantidade de posts:', posts?.length || 0);
+  
+  // Usar posts recebidos se existirem e tiverem dados válidos, senão usar fallback
+  const activePosts = (posts && posts.length > 0) ? posts : fallbackPosts;
+  
+  console.log('🔍 DEBUG - Posts ativos:', activePosts);
+  console.log('🔍 DEBUG - Usando fallback?', !posts || posts.length === 0);
 
   // Extrair categorias únicas
   const categories = ['Todos', ...Array.from(new Set(activePosts.map(post => post.category)))];
+  console.log('🔍 DEBUG - Categorias encontradas:', categories);
 
   // Filtrar posts
   const filteredPosts = useMemo(() => {
@@ -97,6 +105,8 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
       return matchesSearch && matchesCategory;
     });
   }, [activePosts, searchTerm, selectedCategory]);
+
+  console.log('🔍 DEBUG - Posts filtrados:', filteredPosts);
 
   // Função para obter cor da categoria
   const getCategoryColor = (category: string) => {
@@ -127,6 +137,23 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
       padding: '2rem 0'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+        
+        {/* Debug Info */}
+        <div style={{
+          background: '#f3f4f6',
+          border: '1px solid #d1d5db',
+          borderRadius: '8px',
+          padding: '1rem',
+          marginBottom: '2rem',
+          fontSize: '0.875rem',
+          color: '#374151'
+        }}>
+          <strong>🔍 DEBUG INFO:</strong><br/>
+          Posts recebidos: {posts?.length || 0}<br/>
+          Posts ativos: {activePosts.length}<br/>
+          Usando fallback: {(!posts || posts.length === 0) ? 'SIM' : 'NÃO'}<br/>
+          Categorias: {categories.join(', ')}
+        </div>
         
         {/* Header */}
         <div style={{
@@ -499,6 +526,8 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
 };
 
 export default BlogClient;
+
+
 
 
 
