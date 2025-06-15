@@ -23,7 +23,7 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  // Posts integrados com as 4 categorias dos Pilares
+  // Posts fallback garantidos com as 4 categorias dos Pilares
   const fallbackPosts: Post[] = [
     {
       slug: 'ansiedade-estresse-moderno',
@@ -68,13 +68,44 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
       image: '/images/blog/gerenciamento-peso.jpg',
       readTime: '7 min de leitura',
       tags: ['controle de peso', 'metabolismo', 'nutrologia', 'longevidade', 'composição corporal', 'saúde metabólica']
+    },
+    {
+      slug: 'pilares-longevidade-saudavel',
+      title: 'Os 4 Pilares da Longevidade Saudável: Medicina Regenerativa, Nutrologia, Saúde Mental e Gerenciamento de Peso',
+      excerpt: 'Descubra como os quatro pilares fundamentais do Desafio Vitalidade podem transformar sua jornada rumo à longevidade com vitalidade.',
+      date: '2024-06-14',
+      author: 'Dr. Denerval',
+      category: 'Medicina Regenerativa',
+      image: '/images/blog/pilares-longevidade.jpg',
+      readTime: '10 min de leitura',
+      tags: ['longevidade', 'medicina regenerativa', 'nutrologia', 'saúde mental', 'gerenciamento de peso', 'autofagia', 'telômeros']
     }
   ];
 
-  // Usar posts recebidos se existirem e tiverem dados válidos, senão usar fallback
-  const activePosts = (posts && posts.length > 0) ? posts : fallbackPosts;
+  // Lógica inteligente para usar posts
+  let activePosts = fallbackPosts; // Sempre começar com fallback
 
-  // Extrair categorias únicas - sempre incluir as 4 categorias dos Pilares
+  // Se posts foram recebidos e são válidos, usar eles
+  if (posts && Array.isArray(posts) && posts.length > 0) {
+    // Verificar se os posts têm estrutura válida
+    const validPosts = posts.filter(post => 
+      post && 
+      typeof post === 'object' && 
+      post.title && 
+      post.category
+    );
+    
+    if (validPosts.length > 0) {
+      activePosts = validPosts;
+      console.log(`✅ Usando ${validPosts.length} posts dos arquivos .md`);
+    } else {
+      console.log('⚠️ Posts recebidos são inválidos, usando fallback');
+    }
+  } else {
+    console.log('⚠️ Nenhum post recebido, usando fallback');
+  }
+
+  // Garantir que sempre temos as 4 categorias dos Pilares
   const pilarCategories = ['Medicina Regenerativa', 'Nutrologia', 'Saúde Mental', 'Gerenciamento de Peso'];
   const postCategories = Array.from(new Set(activePosts.map(post => post.category)));
   const allCategories = Array.from(new Set([...pilarCategories, ...postCategories]));
@@ -120,6 +151,21 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
         
+        {/* Status Debug */}
+        <div style={{
+          background: '#f3f4f6',
+          border: '1px solid #d1d5db',
+          borderRadius: '8px',
+          padding: '1rem',
+          marginBottom: '2rem',
+          fontSize: '0.875rem',
+          color: '#374151'
+        }}>
+          <strong>📊 Status:</strong> {activePosts.length} posts carregados | 
+          Fonte: {posts && posts.length > 0 ? 'Arquivos .md' : 'Fallback'} | 
+          Categorias: {categories.length - 1}
+        </div>
+        
         {/* Header */}
         <div style={{
           background: 'linear-gradient(135deg, #10b981, #3b82f6)',
@@ -145,7 +191,7 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
             margin: '0 auto',
             lineHeight: '1.6'
           }}>
-            Transforme sua saúde com conteúdo científico sobre longevidade, medicina regenerativa e bem-estar integral
+            Transforme sua saúde com conteúdo científico sobre os 4 pilares da longevidade
           </p>
         </div>
 
@@ -455,7 +501,7 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
             maxWidth: '600px',
             margin: '0 auto 2rem'
           }}>
-            Junte-se ao Desafio Vitalidade e descubra como alcançar longevidade saudável em 30 dias
+            Junte-se ao Desafio Vitalidade e descubra como alcançar longevidade saudável com os 4 pilares
           </p>
           <a
             href="#"
@@ -491,6 +537,8 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
 };
 
 export default BlogClient;
+
+
 
 
 
