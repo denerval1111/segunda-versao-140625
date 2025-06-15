@@ -6,16 +6,19 @@ import Link from 'next/link';
 // Definir tipos específicos para categorias
 type CategoryType = 'Medicina Regenerativa' | 'Nutrologia' | 'Saúde Mental' | 'Gerenciamento de Peso';
 
+// Interface compatível com os dados reais do sistema
 interface Post {
   id: string;
-  title: string;
-  excerpt?: string;
-  date: string;
-  category: CategoryType;
-  author: string;
-  readTime: string;
-  tags?: string[];
-  contentHtml: string;
+  slug?: string;
+  title: any;
+  excerpt?: any;
+  date: any;
+  author: any;
+  category: any;
+  image?: any;
+  readTime: any;
+  tags?: any;
+  contentHtml?: string; // Opcional para compatibilidade
 }
 
 interface PostClientProps {
@@ -48,6 +51,16 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
   // Função helper para obter gradiente da categoria
   const getCategoryGradient = (category: string): string => {
     return categoryGradients[category as CategoryType] || 'linear-gradient(rgba(107, 114, 128, 0.8), rgba(75, 85, 99, 0.8))';
+  };
+
+  // Função para formatar data
+  const formatDate = (date: any): string => {
+    if (!date) return '';
+    try {
+      return new Date(date).toLocaleDateString('pt-BR');
+    } catch {
+      return String(date);
+    }
   };
 
   return (
@@ -85,7 +98,7 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
             fontWeight: '600',
             marginBottom: '1.5rem'
           }}>
-            {post.category}
+            {post.category || 'Artigo'}
           </div>
 
           {/* Título */}
@@ -96,7 +109,7 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
             marginBottom: '1.5rem',
             maxWidth: '900px'
           }}>
-            {post.title}
+            {post.title || 'Título do Artigo'}
           </h1>
 
           {/* Metadados */}
@@ -109,15 +122,15 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span>📅</span>
-              <span>{new Date(post.date).toLocaleDateString('pt-BR')}</span>
+              <span>{formatDate(post.date)}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span>👨‍⚕️</span>
-              <span>{post.author}</span>
+              <span>{post.author || 'Dr. Denerval'}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span>⏱️</span>
-              <span>{post.readTime}</span>
+              <span>{post.readTime || '5 min de leitura'}</span>
             </div>
           </div>
         </div>
@@ -125,7 +138,11 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
 
       {/* Conteúdo Principal */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 2rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '3rem' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: window?.innerWidth > 768 ? '1fr 300px' : '1fr', 
+          gap: '3rem' 
+        }}>
           {/* Artigo */}
           <article style={{
             backgroundColor: 'white',
@@ -135,14 +152,14 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
             border: '1px solid #e5e7eb'
           }}>
             {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
+            {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
               <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: '0.5rem',
                 marginBottom: '2rem'
               }}>
-                {post.tags.map((tag, index) => (
+                {post.tags.map((tag: any, index: number) => (
                   <span key={index} style={{
                     backgroundColor: `${getCategoryColor(post.category)}15`,
                     color: getCategoryColor(post.category),
@@ -151,21 +168,34 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
                     fontSize: '0.8rem',
                     fontWeight: '500'
                   }}>
-                    #{tag}
+                    #{String(tag)}
                   </span>
                 ))}
               </div>
             )}
 
             {/* Conteúdo do Post */}
-            <div 
-              style={{
-                lineHeight: '1.8',
-                fontSize: '1.1rem',
-                color: '#374151'
-              }}
-              dangerouslySetInnerHTML={{ __html: post.contentHtml }}
-            />
+            <div style={{
+              lineHeight: '1.8',
+              fontSize: '1.1rem',
+              color: '#374151'
+            }}>
+              {post.contentHtml ? (
+                <div dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+              ) : (
+                <div>
+                  {post.excerpt && (
+                    <p style={{ marginBottom: '2rem', fontSize: '1.2rem', color: '#6b7280' }}>
+                      {post.excerpt}
+                    </p>
+                  )}
+                  <p>
+                    Este é um artigo sobre {post.category?.toLowerCase() || 'saúde e longevidade'}. 
+                    O conteúdo completo será carregado em breve.
+                  </p>
+                </div>
+              )}
+            </div>
 
             {/* Call to Action */}
             <div style={{
@@ -248,7 +278,7 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
                           fontWeight: '600',
                           marginBottom: '0.5rem'
                         }}>
-                          {relatedPost.category}
+                          {relatedPost.category || 'Artigo'}
                         </div>
                         <h4 style={{
                           fontSize: '0.9rem',
@@ -257,7 +287,7 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
                           lineHeight: '1.4',
                           marginBottom: '0.5rem'
                         }}>
-                          {relatedPost.title}
+                          {relatedPost.title || 'Título do Artigo'}
                         </h4>
                         <div style={{
                           fontSize: '0.8rem',
@@ -265,8 +295,8 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
                           display: 'flex',
                           gap: '1rem'
                         }}>
-                          <span>{new Date(relatedPost.date).toLocaleDateString('pt-BR')}</span>
-                          <span>{relatedPost.readTime}</span>
+                          <span>{formatDate(relatedPost.date)}</span>
+                          <span>{relatedPost.readTime || '5 min'}</span>
                         </div>
                       </article>
                     </Link>
@@ -293,6 +323,7 @@ export default function PostClient({ post, relatedPosts }: PostClientProps) {
     </div>
   );
 }
+
 
 
 
