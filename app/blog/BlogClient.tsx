@@ -1,431 +1,497 @@
-"use client";
+'use client';
 
 import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { FaSearch, FaClock, FaUser, FaTag } from 'react-icons/fa';
+import { FaSearch, FaCalendar, FaUser, FaClock, FaTag, FaArrowRight } from 'react-icons/fa';
 
-// Interface para tipagem dos posts
 interface Post {
-  id: string;
+  slug: string;
   title: string;
-  excerpt?: string;
-  description?: string;
+  excerpt: string;
   date: string;
+  author: string;
   category: string;
-  author?: string;
-  tags?: string[];
-  readTime?: string;
+  image: string;
+  readTime: string;
+  tags: string[];
 }
 
 interface BlogClientProps {
   posts: Post[];
-  categories: string[];
 }
 
-const BlogClient: React.FC<BlogClientProps> = ({ posts, categories }) => {
+const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  // Função para calcular tempo de leitura
-  const calculateReadTime = (content: string) => {
-    const wordsPerMinute = 200;
-    const words = content.split(' ').length;
-    const minutes = Math.ceil(words / wordsPerMinute);
-    return `${minutes} min`;
-  };
+  // Posts integrados como fallback
+  const fallbackPosts: Post[] = [
+    {
+      slug: 'ansiedade-estresse-moderno',
+      title: 'Ansiedade e Estresse Moderno: Estratégias Científicas para o Bem-Estar Mental',
+      excerpt: 'Descubra técnicas baseadas em evidências para gerenciar ansiedade e estresse no mundo moderno, promovendo saúde mental e longevidade.',
+      date: '2024-06-13',
+      author: 'Dr. Denerval',
+      category: 'Saúde Mental',
+      image: '/images/blog/ansiedade-estresse.jpg',
+      readTime: '6 min de leitura',
+      tags: ['ansiedade', 'estresse', 'saúde mental', 'bem-estar', 'mindfulness', 'respiração']
+    },
+    {
+      slug: 'autofagia-renovacao-celular',
+      title: 'Autofagia: O Segredo da Renovação Celular para uma Vida Mais Longa',
+      excerpt: 'Entenda como o processo natural de autofagia pode ser otimizado através de estratégias simples e baseadas em ciência para promover a regeneração celular e retardar o envelhecimento.',
+      date: '2024-06-13',
+      author: 'Dr. Denerval',
+      category: 'Medicina Regenerativa',
+      image: '/images/blog/autofagia-celular.jpg',
+      readTime: '6 min de leitura',
+      tags: ['autofagia', 'regeneração celular', 'longevidade', 'jejum intermitente', 'anti-aging', 'saúde celular']
+    },
+    {
+      slug: 'dieta-mediterranea-asiatica',
+      title: 'Dieta Mediterrânea e Asiática: Fusão Nutricional para Longevidade',
+      excerpt: 'Explore como a combinação das tradições culinárias mediterrânea e asiática pode revolucionar sua saúde, oferecendo benefícios únicos para longevidade e vitalidade.',
+      date: '2024-06-14',
+      author: 'Dr. Denerval',
+      category: 'Nutrologia',
+      image: '/images/blog/dieta-mediterranea-asiatica.jpg',
+      readTime: '8 min de leitura',
+      tags: ['dieta mediterrânea', 'culinária asiática', 'longevidade', 'antioxidantes', 'ômega-3', 'anti-inflamatório']
+    },
+    {
+      slug: 'pilares-longevidade-saudavel',
+      title: 'Os 3 Pilares da Longevidade Saudável: Medicina Regenerativa, Nutrologia e Saúde Mental',
+      excerpt: 'Descubra como a medicina regenerativa não intervencionista, a nutrologia baseada em evidências e o cuidado com a saúde mental podem transformar sua jornada rumo à longevidade com vitalidade.',
+      date: '2024-06-14',
+      author: 'Dr. Denerval',
+      category: 'Medicina Integrativa',
+      image: '/images/blog/pilares-longevidade.jpg',
+      readTime: '8 min de leitura',
+      tags: ['longevidade', 'medicina regenerativa', 'nutrologia', 'saúde mental', 'autofagia', 'telômeros']
+    },
+    {
+      slug: 'gerenciamento-peso-saudavel',
+      title: 'Gerenciamento do Peso Saudável: Estratégias Científicas para Longevidade',
+      excerpt: 'Descubra como o controle de peso baseado em evidências científicas pode transformar sua saúde e promover longevidade através de estratégias nutricionais e metabólicas inteligentes.',
+      date: '2024-06-15',
+      author: 'Dr. Denerval',
+      category: 'Nutrologia',
+      image: '/images/blog/gerenciamento-peso.jpg',
+      readTime: '7 min de leitura',
+      tags: ['controle de peso', 'metabolismo', 'nutrologia', 'longevidade', 'composição corporal', 'saúde metabólica']
+    }
+  ];
 
-  // Função para formatar data
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
+  // Usar posts recebidos ou fallback
+  const activePosts = posts && posts.length > 0 ? posts : fallbackPosts;
 
-  // Função para obter cores por categoria
-  const getCategoryColors = (category: string) => {
-    const colors = {
-      'Medicina Regenerativa': { bg: '#10b981', text: '#ffffff' },
-      'Nutrologia': { bg: '#3b82f6', text: '#ffffff' },
-      'Saúde Mental': { bg: '#8b5cf6', text: '#ffffff' },
-      'default': { bg: '#6b7280', text: '#ffffff' }
-    };
-    return colors[category as keyof typeof colors] || colors.default;
-  };
+  // Extrair categorias únicas
+  const categories = ['Todos', ...Array.from(new Set(activePosts.map(post => post.category)))];
 
-  // Posts filtrados
+  // Filtrar posts
   const filteredPosts = useMemo(() => {
-    return posts.filter(post => {
+    return activePosts.filter(post => {
       const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                          (post.description && post.description.toLowerCase().includes(searchTerm.toLowerCase()));
+                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === 'Todos' || post.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [posts, searchTerm, selectedCategory]);
+  }, [activePosts, searchTerm, selectedCategory]);
 
-  // Preparar categorias para filtro
-  const allCategories = ['Todos', ...categories];
+  // Função para obter cor da categoria
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      'Medicina Regenerativa': 'linear-gradient(135deg, #10b981, #059669)',
+      'Medicina Integrativa': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+      'Nutrologia': 'linear-gradient(135deg, #f59e0b, #d97706)',
+      'Saúde Mental': 'linear-gradient(135deg, #3b82f6, #2563eb)',
+    };
+    return colors[category as keyof typeof colors] || 'linear-gradient(135deg, #6b7280, #4b5563)';
+  };
+
+  // Função para obter placeholder da imagem
+  const getImagePlaceholder = (category: string) => {
+    const gradients = {
+      'Medicina Regenerativa': 'linear-gradient(135deg, #10b981, #059669)',
+      'Medicina Integrativa': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+      'Nutrologia': 'linear-gradient(135deg, #f59e0b, #d97706)',
+      'Saúde Mental': 'linear-gradient(135deg, #3b82f6, #2563eb)',
+    };
+    return gradients[category as keyof typeof gradients] || 'linear-gradient(135deg, #6b7280, #4b5563)';
+  };
 
   return (
     <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)',
-      fontFamily: 'system-ui, -apple-system, sans-serif'
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0f9ff 100%)',
+      padding: '2rem 0'
     }}>
-      {/* Header */}
-      <div style={{ 
-        backgroundColor: '#ffffff', 
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-        borderBottom: '1px solid #e5e7eb'
-      }}>
-        <div style={{ 
-          maxWidth: '1200px', 
-          margin: '0 auto', 
-          padding: '32px 16px',
-          textAlign: 'center'
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+        
+        {/* Header */}
+        <div style={{
+          background: 'linear-gradient(135deg, #10b981, #3b82f6)',
+          borderRadius: '20px',
+          padding: '3rem 2rem',
+          marginBottom: '3rem',
+          color: 'white',
+          textAlign: 'center',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
         }}>
-          <h1 style={{ 
-            fontSize: '2.5rem', 
-            fontWeight: 'bold', 
-            color: '#111827', 
-            marginBottom: '16px',
-            margin: '0 0 16px 0'
+          <h1 style={{
+            fontSize: '3rem',
+            fontWeight: '800',
+            marginBottom: '1rem',
+            textShadow: '0 2px 4px rgba(0,0,0,0.3)'
           }}>
             Blog Desafio Vitalidade
           </h1>
-          <p style={{ 
-            fontSize: '1.25rem', 
-            color: '#6b7280', 
-            maxWidth: '768px', 
+          <p style={{
+            fontSize: '1.25rem',
+            opacity: 0.9,
+            maxWidth: '600px',
             margin: '0 auto',
             lineHeight: '1.6'
           }}>
-            Artigos científicos sobre longevidade saudável, medicina regenerativa, nutrologia e saúde mental para transformar sua vida.
+            Transforme sua saúde com conteúdo científico sobre longevidade, medicina regenerativa e bem-estar integral
           </p>
         </div>
-      </div>
 
-      {/* Filtros e Busca */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 16px' }}>
-        <div style={{ 
-          backgroundColor: '#ffffff', 
-          borderRadius: '12px', 
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          border: '1px solid #e5e7eb',
-          padding: '24px',
-          marginBottom: '32px'
+        {/* Controles de Busca e Filtro */}
+        <div style={{
+          background: 'white',
+          borderRadius: '16px',
+          padding: '2rem',
+          marginBottom: '2rem',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+          border: '1px solid #e5e7eb'
         }}>
-          {/* Barra de Busca */}
-          <div style={{ position: 'relative', marginBottom: '24px' }}>
-            <div style={{ 
-              position: 'absolute', 
-              left: '16px', 
-              top: '50%', 
-              transform: 'translateY(-50%)',
-              color: '#9ca3af'
-            }}>
-              <FaSearch />
+          
+          {/* Busca */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ position: 'relative' }}>
+              <FaSearch style={{
+                position: 'absolute',
+                left: '1rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#6b7280',
+                fontSize: '1.1rem'
+              }} />
+              <input
+                type="text"
+                placeholder="Buscar artigos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '1rem 1rem 1rem 3rem',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '12px',
+                  fontSize: '1rem',
+                  transition: 'all 0.3s ease',
+                  outline: 'none'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#10b981'}
+                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Buscar artigos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                width: '100%',
-                paddingLeft: '48px',
-                paddingRight: '16px',
-                paddingTop: '12px',
-                paddingBottom: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '16px',
-                outline: 'none',
-                transition: 'all 0.2s',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#10b981';
-                e.target.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#d1d5db';
-                e.target.style.boxShadow = 'none';
-              }}
-            />
           </div>
 
           {/* Filtros de Categoria */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {allCategories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  backgroundColor: selectedCategory === category ? '#10b981' : '#f3f4f6',
-                  color: selectedCategory === category ? '#ffffff' : '#374151',
-                  boxShadow: selectedCategory === category ? '0 2px 4px rgba(16, 185, 129, 0.2)' : 'none'
-                }}
-                onMouseEnter={(e) => {
-                  if (selectedCategory !== category) {
-                    e.currentTarget.style.backgroundColor = '#e5e7eb';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (selectedCategory !== category) {
-                    e.currentTarget.style.backgroundColor = '#f3f4f6';
-                  }
-                }}
-              >
-                {category}
-              </button>
-            ))}
+          <div>
+            <h3 style={{
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              marginBottom: '1rem',
+              color: '#374151'
+            }}>
+              Filtrar por categoria:
+            </h3>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.75rem'
+            }}>
+              {categories.map(category => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '25px',
+                    border: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    background: selectedCategory === category 
+                      ? 'linear-gradient(135deg, #10b981, #059669)'
+                      : '#f9fafb',
+                    color: selectedCategory === category ? 'white' : '#374151',
+                    boxShadow: selectedCategory === category 
+                      ? '0 4px 12px rgba(16, 185, 129, 0.3)'
+                      : '0 2px 4px rgba(0,0,0,0.05)',
+                    transform: selectedCategory === category ? 'translateY(-1px)' : 'none'
+                  }}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Grid de Posts */}
-        {filteredPosts.length > 0 ? (
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
-            gap: '32px' 
-          }}>
-            {filteredPosts.map((post) => {
-              const categoryColors = getCategoryColors(post.category);
-              return (
-                <article
-                  key={post.id}
-                  style={{
-                    backgroundColor: '#ffffff',
-                    borderRadius: '12px',
-                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-                    border: '1px solid #e5e7eb',
-                    overflow: 'hidden',
-                    transition: 'all 0.3s',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                >
-                  {/* Header do Card com Gradiente */}
-                  <div style={{ 
-                    height: '120px', 
-                    background: `linear-gradient(135deg, ${categoryColors.bg} 0%, ${categoryColors.bg}dd 100%)`,
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    padding: '16px'
-                  }}>
-                    <span style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      color: '#374151',
-                      padding: '4px 12px',
-                      borderRadius: '20px',
-                      fontSize: '12px',
-                      fontWeight: '500'
-                    }}>
-                      {post.category}
-                    </span>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+          gap: '2rem',
+          marginBottom: '3rem'
+        }}>
+          {filteredPosts.map((post) => (
+            <article
+              key={post.slug}
+              style={{
+                background: 'white',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                border: '1px solid #e5e7eb',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.08)';
+              }}
+            >
+              
+              {/* Imagem Placeholder */}
+              <div style={{
+                height: '200px',
+                background: getImagePlaceholder(post.category),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '1.2rem',
+                fontWeight: '600',
+                textAlign: 'center',
+                padding: '1rem'
+              }}>
+                {post.category}
+              </div>
+
+              {/* Conteúdo */}
+              <div style={{ padding: '1.5rem' }}>
+                
+                {/* Categoria Badge */}
+                <div style={{
+                  display: 'inline-block',
+                  background: getCategoryColor(post.category),
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '20px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  marginBottom: '1rem'
+                }}>
+                  {post.category}
+                </div>
+
+                {/* Título */}
+                <h2 style={{
+                  fontSize: '1.3rem',
+                  fontWeight: '700',
+                  marginBottom: '0.75rem',
+                  color: '#1f2937',
+                  lineHeight: '1.4',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
+                  {post.title}
+                </h2>
+
+                {/* Excerpt */}
+                <p style={{
+                  color: '#6b7280',
+                  lineHeight: '1.6',
+                  marginBottom: '1rem',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
+                  {post.excerpt}
+                </p>
+
+                {/* Metadados */}
+                <div style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '1rem',
+                  marginBottom: '1rem',
+                  fontSize: '0.85rem',
+                  color: '#6b7280'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <FaCalendar />
+                    <span>{new Date(post.date).toLocaleDateString('pt-BR')}</span>
                   </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <FaUser />
+                    <span>{post.author}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <FaClock />
+                    <span>{post.readTime}</span>
+                  </div>
+                </div>
 
-                  {/* Conteúdo do Card */}
-                  <div style={{ padding: '24px' }}>
-                    <h2 style={{ 
-                      fontSize: '1.25rem', 
-                      fontWeight: 'bold', 
-                      color: '#111827', 
-                      marginBottom: '12px',
-                      lineHeight: '1.4',
-                      margin: '0 0 12px 0'
-                    }}>
-                      {post.title}
-                    </h2>
-                    
-                    <p style={{ 
-                      color: '#6b7280', 
-                      marginBottom: '16px',
-                      lineHeight: '1.6',
-                      margin: '0 0 16px 0'
-                    }}>
-                      {post.excerpt || post.description || 'Descubra insights valiosos sobre longevidade saudável e bem-estar.'}
-                    </p>
-
-                    {/* Metadados */}
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between',
-                      fontSize: '14px', 
-                      color: '#6b7280', 
-                      marginBottom: '16px',
-                      flexWrap: 'wrap',
-                      gap: '8px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <FaClock />
-                          <span>{formatDate(post.date)}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <FaUser />
-                          <span>{post.author || 'Dr. Denerval'}</span>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <FaClock />
-                        <span>{post.readTime || calculateReadTime(post.excerpt || post.description || '')}</span>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    {post.tags && post.tags.length > 0 && (
-                      <div style={{ 
-                        display: 'flex', 
-                        flexWrap: 'wrap', 
-                        gap: '8px', 
-                        marginBottom: '16px' 
-                      }}>
-                        {post.tags.slice(0, 3).map((tag, index) => (
-                          <span
-                            key={index}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              padding: '4px 8px',
-                              backgroundColor: '#f3f4f6',
-                              color: '#6b7280',
-                              fontSize: '12px',
-                              borderRadius: '20px'
-                            }}
-                          >
-                            <FaTag style={{ fontSize: '10px' }} />
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Link para o artigo */}
-                    <Link
-                      href={`/blog/${post.id}`}
+                {/* Tags */}
+                <div style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem',
+                  marginBottom: '1.5rem'
+                }}>
+                  {post.tags.slice(0, 3).map((tag, index) => (
+                    <span
+                      key={index}
                       style={{
-                        display: 'inline-flex',
+                        display: 'flex',
                         alignItems: 'center',
-                        color: '#10b981',
-                        fontWeight: '500',
-                        textDecoration: 'none',
-                        transition: 'color 0.2s'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#059669';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#10b981';
+                        gap: '0.25rem',
+                        background: '#f3f4f6',
+                        color: '#6b7280',
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '12px',
+                        fontSize: '0.75rem',
+                        fontWeight: '500'
                       }}
                     >
-                      Ler artigo completo
-                      <svg 
-                        style={{ 
-                          marginLeft: '8px', 
-                          width: '16px', 
-                          height: '16px',
-                          transition: 'transform 0.2s'
-                        }} 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        ) : (
-          <div style={{ textAlign: 'center', padding: '48px 0' }}>
-            <div style={{ color: '#9ca3af', marginBottom: '16px' }}>
-              <FaSearch style={{ fontSize: '48px', margin: '0 auto' }} />
-            </div>
-            <h3 style={{ 
-              fontSize: '1.25rem', 
-              fontWeight: '500', 
-              color: '#6b7280', 
-              marginBottom: '8px',
-              margin: '0 0 8px 0'
+                      <FaTag style={{ fontSize: '0.7rem' }} />
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Link para o artigo */}
+                <a
+                  href={`/blog/${post.slug}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '12px',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateX(4px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateX(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  Ler artigo completo
+                  <FaArrowRight />
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {/* Mensagem quando não há posts */}
+        {filteredPosts.length === 0 && (
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '3rem',
+            textAlign: 'center',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+            border: '1px solid #e5e7eb'
+          }}>
+            <h3 style={{
+              fontSize: '1.5rem',
+              fontWeight: '600',
+              color: '#374151',
+              marginBottom: '1rem'
             }}>
               Nenhum artigo encontrado
             </h3>
-            <p style={{ color: '#6b7280', margin: '0' }}>
-              Tente ajustar os filtros ou termo de busca.
+            <p style={{ color: '#6b7280' }}>
+              Tente ajustar os filtros ou termos de busca para encontrar o conteúdo desejado.
             </p>
           </div>
         )}
 
         {/* Call to Action */}
-        <div style={{ 
-          marginTop: '64px', 
-          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-          borderRadius: '12px', 
-          padding: '32px', 
-          textAlign: 'center', 
-          color: '#ffffff' 
+        <div style={{
+          background: 'linear-gradient(135deg, #1f2937, #111827)',
+          borderRadius: '20px',
+          padding: '3rem 2rem',
+          textAlign: 'center',
+          color: 'white',
+          marginTop: '3rem'
         }}>
-          <h2 style={{ 
-            fontSize: '2rem', 
-            fontWeight: 'bold', 
-            marginBottom: '16px',
-            margin: '0 0 16px 0'
+          <h2 style={{
+            fontSize: '2rem',
+            fontWeight: '700',
+            marginBottom: '1rem'
           }}>
-            Transforme sua Saúde e Vitalidade
+            Pronto para Transformar sua Saúde?
           </h2>
-          <p style={{ 
-            fontSize: '1.25rem', 
-            marginBottom: '24px', 
+          <p style={{
+            fontSize: '1.1rem',
             opacity: 0.9,
-            margin: '0 0 24px 0'
+            marginBottom: '2rem',
+            maxWidth: '600px',
+            margin: '0 auto 2rem'
           }}>
-            Junte-se ao Desafio Vitalidade e descubra como viver com mais energia, saúde e longevidade.
+            Junte-se ao Desafio Vitalidade e descubra como alcançar longevidade saudável em 30 dias
           </p>
-          <Link
-            href="/inscricao"
+          <a
+            href="#"
             style={{
-              display: 'inline-block',
-              backgroundColor: '#ffffff',
-              color: '#10b981',
-              padding: '12px 32px',
-              borderRadius: '8px',
-              fontWeight: '600',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              color: 'white',
+              padding: '1rem 2rem',
+              borderRadius: '12px',
               textDecoration: 'none',
-              transition: 'all 0.2s'
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              transition: 'all 0.3s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 20px rgba(16, 185, 129, 0.4)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            Saiba mais sobre o Desafio
-          </Link>
+            Participar do Desafio Vitalidade
+            <FaArrowRight />
+          </a>
         </div>
       </div>
     </div>
@@ -433,6 +499,8 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts, categories }) => {
 };
 
 export default BlogClient;
+
+
 
 
 
