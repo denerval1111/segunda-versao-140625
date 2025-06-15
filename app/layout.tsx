@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Footer from '@/components/Footer';
 
-// Importações da estrutura CSS organizada
+// Importações da estrutura CSS organizada - NOMES CORRETOS VERIFICADOS NO GITHUB
 import '../style/globals.css';
 import '../style/base/typography.css';
 import '../style/base/utilities.css';
@@ -10,8 +10,8 @@ import '../style/components/cards.css';
 import '../style/components/buttons.css';
 import '../style/components/images.css';
 import '../style/layout/responsive.css';
-import '../style/amimations/tansitions.css';
-import '../style/amimations/keyframes.css';
+import '../style/animations/transitions.css';  // Nome correto: animations/transitions.css
+import '../style/animations/keyframes.css';    // Nome correto: animations/keyframes.css
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -35,7 +35,9 @@ export default function RootLayout({
   );
 }
 
-// Trigger para forçar rebuild da Vercel - Atualização: 15/06/2025 13:57
+// Trigger para forçar rebuild - Nomes corretos verificados: 15/06/2025 14:12
+
+
 
 
 
