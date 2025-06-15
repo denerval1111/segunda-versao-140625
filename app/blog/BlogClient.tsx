@@ -97,12 +97,7 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
     
     if (validPosts.length > 0) {
       activePosts = validPosts;
-      console.log(`✅ Usando ${validPosts.length} posts dos arquivos .md`);
-    } else {
-      console.log('⚠️ Posts recebidos são inválidos, usando fallback');
     }
-  } else {
-    console.log('⚠️ Nenhum post recebido, usando fallback');
   }
 
   // Garantir que sempre temos as 4 categorias dos Pilares
@@ -150,21 +145,6 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
       padding: '2rem 0'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
-        
-        {/* Status Debug */}
-        <div style={{
-          background: '#f3f4f6',
-          border: '1px solid #d1d5db',
-          borderRadius: '8px',
-          padding: '1rem',
-          marginBottom: '2rem',
-          fontSize: '0.875rem',
-          color: '#374151'
-        }}>
-          <strong>📊 Status:</strong> {activePosts.length} posts carregados | 
-          Fonte: {posts && posts.length > 0 ? 'Arquivos .md' : 'Fallback'} | 
-          Categorias: {categories.length - 1}
-        </div>
         
         {/* Header */}
         <div style={{
@@ -537,6 +517,8 @@ const BlogClient: React.FC<BlogClientProps> = ({ posts }) => {
 };
 
 export default BlogClient;
+
+
 
 
 
